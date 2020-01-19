@@ -1,0 +1,63 @@
+// ReplicateTask's purpose is to copy the entire JENKINS_HOME directory
+// to one or more backup systems.
+// It gets the IP address of the machine that's running the job,
+// then replicates to any provided IP address that isn't itself.
+def ReplicateTask(_backupAddress)
+{
+    script
+    {
+        // Get IP address of machine running script
+        machineIpAddress = sh returnStdout: true, script: 'ip add | grep -i eth0'
+        echo "ReplicateTask: backup address  : [ ${_backupAddress} ]";
+        echo "ReplicateTask: machineIpAddress: [ ${machineIpAddress} ]";
+
+        if(machineIpAddress.contains(_backupAddress))
+        {
+            echo "Backup IP address matches current machine's IP, skipping";
+        }
+        else
+        {
+            echo "Backup IP address differs from current machine's IP address, backing up";
+            // Rsync all folders within JENKINS_HOME to another machine.
+            // Excluding 'jobs/JenkinsReplicator/builds' otherwise the job will be in progress during the backup,
+            // which means it tries to continue off when the backup Jenkins instance is started
+            sh label: 'rsync backup', script: "rsync -av --delete \
+                                                    --exclude jobs/JenkinsReplicator/builds \
+                                                    /opt/jenkins_home jenkins@$_backupAddress:/opt/"
+        }
+    }
+}
+
+
+pipeline
+{
+    agent any
+    triggers
+    {
+        upstream 'UpstreamJob' // When the upstream job finishes, Jenkins will then kick off this job.
+    }
+
+    stages
+    {
+        stage('Replicate A->B')
+        {
+            steps
+            {
+                sshagent(['jenkinsA-to-B'])
+                {
+                    ReplicateTask("192.168.1.171")
+                }
+            }
+        }
+        stage('Replicate B->A')
+        {
+            steps
+            {
+                sshagent(['jenkinsB-to-A'])
+                {
+                    ReplicateTask("192.168.1.170")
+                }
+            }
+        }
+    }
+}
