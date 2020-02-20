@@ -1,0 +1,30 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Dummy Setup')
+        {
+            steps
+            {
+                echo 'Dummy step says hello'
+            }
+        }
+    }
+    post
+    {
+        always
+        {
+            script
+            {
+                def GIT_LOG = sh ( script: 'git log --oneline --no-decorate $GIT_PREVIOUS_SUCCESSFUL_COMMIT..HEAD', returnStdout: true )
+                def HOST_NAME = sh ( script: 'hostname', returnStdout: true )
+                echo "$GIT_LOG"
+                discordSend title: "$HOST_NAME: $JOB_NAME", description: "#$BUILD_NUMBER $currentBuild.currentResult", footer: "<@178248197154537473> $GIT_LOG", link: env.BUILD_URL, result: currentBuild.currentResult, webhookURL: 'https://discordapp.com/api/webhooks/684062604485853204/x9NaKf3QJtVPGiCttNwuB7AMXpTfNEvcI7a5UQy_p8YK8kBZxtxRaQNmRKsKxVxk63o7'
+            }
+        }
+    }
+}
+
+
