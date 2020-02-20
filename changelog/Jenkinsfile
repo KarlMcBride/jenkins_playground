@@ -1,0 +1,23 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Log Changes')
+        {
+            steps
+            {
+                // Requires https://plugins.jenkins.io/last-changes/ to be installed
+                lastChanges since: 'LAST_SUCCESSFUL_BUILD', format:'SIDE', matching: 'LINE'
+                echo "Change link: ${env.BUILD_URL}last-changes"
+
+                script
+                {
+                    def GIT_LOG = sh ( script: 'git log --oneline --no-decorate $GIT_PREVIOUS_SUCCESSFUL_COMMIT..HEAD', returnStdout: true )
+                    echo "Git Log:\n$GIT_LOG"
+                }
+            }
+        }
+    }
+}
