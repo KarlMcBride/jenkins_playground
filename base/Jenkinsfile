@@ -1,0 +1,15 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Dummy Setup')
+        {
+            steps
+            {
+                echo 'Dummy step says hello'
+            }
+        }
+    }
+}
