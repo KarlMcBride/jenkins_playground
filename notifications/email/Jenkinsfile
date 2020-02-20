@@ -1,0 +1,29 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Dummy Setup')
+        {
+            steps
+            {
+                echo 'Dummy step says hello'
+            }
+        }
+    }
+    post
+    {
+        always
+        {
+            script
+            {
+                def GIT_LOG = sh ( script: 'git log --oneline --no-decorate $GIT_PREVIOUS_SUCCESSFUL_COMMIT..HEAD', returnStdout: true )
+                echo "$GIT_LOG"
+                emailext subject: "$JOB_NAME #$BUILD_NUMBER $currentBuild.currentResult", body: "$GIT_LOG", to: 'karlmcbride1992@gmail.com'
+            }
+        }
+    }
+}
+
+
