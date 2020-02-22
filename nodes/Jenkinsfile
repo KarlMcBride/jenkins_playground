@@ -1,0 +1,19 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Echo Nodes')
+        {
+            steps
+            {
+                script
+                {
+                    NODE_LIST = nodesByLabel label: 'Ubuntu'
+                }
+                echo "Node list: [ $NODE_LIST ]"
+            }
+        }
+    }
+}
