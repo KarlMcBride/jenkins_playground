@@ -1,0 +1,50 @@
+// This Jenkinsfile is to demonstrate running three parallel stages on different nodes,
+// all of which call a common task function (print CPU info).
+
+// If a label doesn't exist, that stage will lock indefinitely until cancelled.
+
+
+def CommonTask()
+{
+    sh 'echo CPU: $(cat /proc/cpuinfo | grep -i "model name" | sort --unique)'
+}
+
+
+pipeline
+{
+    agent { label 'Master' }
+
+    stages
+    {
+        stage('Parallel Agent Stages')
+        {
+            parallel
+            {
+                stage('Master Stage')
+                {
+                    agent { label 'Master' }
+                    steps
+                    {
+                        CommonTask()
+                    }
+                }
+                stage('Jenkins-A Stage')
+                {
+                    agent { label 'JenkinsA' }
+                    steps
+                    {
+                        CommonTask()
+                    }
+                }
+                stage('Jenkins-B Stage')
+                {
+                    agent { label 'JenkinsB' }
+                    steps
+                    {
+                        CommonTask()
+                    }
+                }
+            }
+        }
+    }
+}
