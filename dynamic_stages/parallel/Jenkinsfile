@@ -1,0 +1,39 @@
+// Example that spawns off 10 instances of a stage to be carried out in parallel.
+
+def getBuildStep()
+{
+    return
+    {
+        node ('master')
+        {
+            echo "Running CommonTask on NODE_NAME [${env.NODE_NAME}]"
+            sleep 10
+        }
+    }
+}
+
+
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage("Parallel Dynamic Stages")
+        {
+            script
+            {
+                stepsForParallel = [:]
+                for (int i = 1; i <= 10; i++)
+                {
+                    def s = TargetOSs.get(i)
+                    def stepName = "Iteration ${i}"
+                    stepsForParallel[stepName] = getBuildStep(s)
+                }
+                stepsForParallel['failFast'] = false
+                parallel stepsForParallel
+            }
+
+        }
+    }
+}
