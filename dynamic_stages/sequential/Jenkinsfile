@@ -1,0 +1,28 @@
+// Basic example that shows iteration of an internal stage as part of a script block.
+// Not really dynamic as the range is fixed, but these could be substituted according
+// to enviromental variables or parameters supplied by the user.
+
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Dynamic Sequential Stage')
+        {
+            steps
+            {
+                script
+                {
+                    for (int INDEX = 1; INDEX <= 10; INDEX++)
+                    {
+                        stage("Stage $INDEX")
+                        {
+                            echo("Stage $INDEX says hello")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
