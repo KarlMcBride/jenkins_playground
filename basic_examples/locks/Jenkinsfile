@@ -1,0 +1,28 @@
+// Demonstrates how a lock can be used in conjunction with environmental parameters, in this case node names.
+// With just a string, the lock will be applied across all nodes.
+
+// For example, if multiple jobs are built on node A, the first job will get the lock, the rest will wait, as the
+// lock name is the same for both ("nodeA_thirty_second_sleep_lock").
+
+// However, if another job starts and is built on node B, this will get the lock and run immediately, as its lock name
+// differs ("nodeB_thirty_second_sleep_lock").
+
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Sleep 30')
+        {
+            steps
+            {
+                lock("${env.NODE_NAME}_thirty_second_sleep_lock")
+                {
+                    echo "Sleeping for 30 seconds on [${env.NODE_NAME}]"
+                    sleep 30
+                }
+            }
+        }
+    }
+}
