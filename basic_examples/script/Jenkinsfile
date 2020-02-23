@@ -1,0 +1,37 @@
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage('Unstable Stage')
+        {
+            steps
+            {
+                // Will flag this stage as unstable every time.
+                unstable 'Unstable Command'
+            }
+        }
+        stage ('Unreliable Script - 25%')
+        {
+            steps
+            {
+                sh './basic_examples/unstable/rng.sh 25'
+            }
+        }
+        stage ('Unreliable Script - 50%')
+        {
+            steps
+            {
+                sh './basic_examples/unstable/rng.sh 50'
+            }
+        }
+        stage ('Unreliable Script - 75%')
+        {
+            steps
+            {
+                sh './basic_examples/unstable/rng.sh 75'
+            }
+        }
+    }
+}
