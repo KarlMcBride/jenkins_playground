@@ -21,7 +21,14 @@ pipeline
                 def GIT_LOG = sh ( script: 'git log --oneline --no-decorate $GIT_PREVIOUS_SUCCESSFUL_COMMIT..HEAD', returnStdout: true )
                 def HOST_NAME = sh ( script: 'hostname', returnStdout: true )
                 echo "$GIT_LOG"
-                discordSend title: "$HOST_NAME: $JOB_NAME", description: "#$BUILD_NUMBER $currentBuild.currentResult", footer: "<@178248197154537473> $GIT_LOG", link: env.BUILD_URL, result: currentBuild.currentResult, webhookURL: 'https://discordapp.com/api/webhooks/684062604485853204/x9NaKf3QJtVPGiCttNwuB7AMXpTfNEvcI7a5UQy_p8YK8kBZxtxRaQNmRKsKxVxk63o7'
+                discordSend description: "$BUILD_URL",
+                            footer: "$GIT_LOG",
+                            image: '',
+                            link: '',
+                            result: currentBuild.currentResult,
+                            thumbnail: '',
+                            title: "$HOST_NAME: $JOB_NAME",
+                            webhookURL: 'https://discordapp.com/api/webhooks/812735418504052766/AumZJU3Gt7fW0SsoigXsAp-xpAcPv5q2LGk6I41l8IJnfidxw-KbmESZamhmuy9B59aU'
             }
         }
     }
