@@ -1,0 +1,24 @@
+pipeline
+{
+    agent any // { label 'Master' }
+
+    stages
+    {
+        stage('Git Checkout')
+        {
+            agent any
+            steps
+            {
+                lock("${env.NODE_NAME}_git_lfs_pull_lock")
+                {
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/master']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'GitLFSPull']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[credentialsId: 'personal_github_com', url: 'git@github.com:KarlMcBride/jenkins_playground.git']]])
+                }
+            }
+        }
+    }
+}
