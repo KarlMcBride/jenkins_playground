@@ -1,0 +1,33 @@
+// Extension to the Jenkinsfile under 'script', which obtains the script's
+// standard outputs and return status.
+
+pipeline
+{
+    agent any
+
+    stages
+    {
+        stage ('Unreliable Script - 50% (StdOut)')
+        {
+            steps
+            {
+                script
+                {
+                    def std_out = sh ( script: './basic_examples/script_returns/rng.sh 50', returnStdout: true )
+                    echo "File std_out: [ $std_out ]"
+                }
+            }
+        }
+        stage ('Unreliable Script - 50% (ReturnStatus)')
+        {
+            steps
+            {
+                script
+                {
+                    def return_status = sh ( script: './basic_examples/script_returns/rng.sh 50', returnStatus: true )
+                    echo "sh status [ $return_status ]"
+                }
+            }
+        }
+    }
+}
