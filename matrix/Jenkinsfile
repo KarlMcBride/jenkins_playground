@@ -1,14 +1,14 @@
 // Example of running builds for the fruit axis, so the same steps should be carried out for
 // apple, banana and orange.
 
-// The master node orchestrates this due to the pipeline agent, however the matrix itself will use any agent.
+// Uncomment the master node so that it orchestrates this job, however the matrix itself will use any agent.
 
 // Note: if statements are used to make the banana 'build' unstable, and for the orange 'test' to fail, to demonstrate
 // how failing stages appear in a matrix.
 
 pipeline
 {
-    agent { label 'Master' }
+    agent any //{ label 'Master' }
 
     stages
     {
